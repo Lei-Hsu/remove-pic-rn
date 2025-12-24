@@ -22,7 +22,7 @@ export const DeletionSwiper: React.FC<DeletionSwiperProps> = ({
   if (!photos || photos.length === 0) {
     return (
       <View style={styles.container}>
-        <Text style={styles.text}>{t("no_photos")}</Text>
+        <Text style={styles.text}>{t("home.no_photos")}</Text>
       </View>
     );
   }
@@ -57,7 +57,7 @@ export const DeletionSwiper: React.FC<DeletionSwiperProps> = ({
         cardVerticalMargin={20}
         overlayLabels={{
           left: {
-            title: t("delete"),
+            title: t("common.delete"),
             style: {
               label: {
                 backgroundColor: "red",
@@ -75,7 +75,7 @@ export const DeletionSwiper: React.FC<DeletionSwiperProps> = ({
             },
           },
           right: {
-            title: t("keep"),
+            title: t("common.keep"),
             style: {
               label: {
                 backgroundColor: "green",

@@ -18,9 +18,12 @@ export const usePhotoLibrary = () => {
       if (status === "granted") return true;
 
       if (!canAskAgain) {
-        Alert.alert(t("permission_required"), t("permission_message"), [
-          { text: t("open_settings"), onPress: Linking.openSettings },
-          { text: t("cancel"), style: "cancel" },
+        Alert.alert(t("permissions.required"), t("permissions.message"), [
+          {
+            text: t("permissions.open_settings"),
+            onPress: Linking.openSettings,
+          },
+          { text: t("common.cancel"), style: "cancel" },
         ]);
       }
       return false;
@@ -56,7 +59,7 @@ export const usePhotoLibrary = () => {
       return true;
     } catch (error) {
       console.error("Delete failed", error);
-      Alert.alert(t("delete_failed"), t("delete_failed_message"));
+      Alert.alert(t("errors.delete_failed"), t("errors.delete_failed_message"));
       return false;
     }
   };

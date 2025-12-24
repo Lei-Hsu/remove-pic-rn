@@ -31,7 +31,7 @@ export default function HomeScreen() {
 
   useEffect(() => {
     loadPhotos(50); // Load initial batch
-  }, []);
+  }, [loadPhotos]);
 
   const handleSwipeLeft = (index: number) => {
     if (photos[index]) {
@@ -52,13 +52,13 @@ export default function HomeScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>{t("clean_gallery")}</Text>
+        <Text style={styles.title}>{t("home.title")}</Text>
         <TouchableOpacity
           style={styles.reviewButton}
           onPress={() => router.push("/confirmation")}
         >
           <Text style={styles.reviewButtonText}>
-            {t("review_count", { count: markedForDeletion.length })}
+            {t("home.review_button", { count: markedForDeletion.length })}
           </Text>
         </TouchableOpacity>
       </View>

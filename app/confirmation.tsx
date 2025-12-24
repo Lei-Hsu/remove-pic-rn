@@ -35,12 +35,12 @@ export default function ConfirmationScreen() {
     if (markedForDeletion.length === 0) return;
 
     Alert.alert(
-      t("confirm_title"),
-      t("confirm_message", { count: markedForDeletion.length }),
+      t("confirmation.alert.title"),
+      t("confirmation.alert.message", { count: markedForDeletion.length }),
       [
-        { text: t("cancel"), style: "cancel" },
+        { text: t("common.cancel"), style: "cancel" },
         {
-          text: t("delete_action"),
+          text: t("common.delete_action"),
           style: "destructive",
           onPress: async () => {
             setIsDeleting(true);
@@ -48,9 +48,11 @@ export default function ConfirmationScreen() {
             setIsDeleting(false);
             if (success) {
               clearDeletionList();
-              Alert.alert(t("success"), t("success_message"), [
-                { text: t("ok"), onPress: () => router.back() },
-              ]);
+              Alert.alert(
+                t("common.success"),
+                t("confirmation.success_message"),
+                [{ text: t("common.ok"), onPress: () => router.back() }]
+              );
             }
           },
         },
@@ -70,7 +72,7 @@ export default function ConfirmationScreen() {
         onPress={() => unmarkForDeletion(item.id)}
         style={styles.removeButton}
       >
-        <Text style={styles.removeText}>{t("keep")}</Text>
+        <Text style={styles.removeText}>{t("common.keep")}</Text>
       </TouchableOpacity>
     </View>
   );
@@ -79,16 +81,16 @@ export default function ConfirmationScreen() {
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()}>
-          <Text style={styles.backText}>{t("back")}</Text>
+          <Text style={styles.backText}>{t("common.back")}</Text>
         </TouchableOpacity>
-        <Text style={styles.title}>{t("review_deletions")}</Text>
+        <Text style={styles.title}>{t("confirmation.title")}</Text>
         <View style={{ width: 50 }} />
       </View>
 
       <View style={styles.content}>
         {markedForDeletion.length === 0 ? (
           <View style={styles.emptyContainer}>
-            <Text style={styles.emptyText}>{t("no_photos_marked")}</Text>
+            <Text style={styles.emptyText}>{t("confirmation.no_photos")}</Text>
           </View>
         ) : (
           <FlatList
@@ -102,7 +104,9 @@ export default function ConfirmationScreen() {
 
       <View style={styles.footer}>
         <Text style={styles.summaryText}>
-          {t("photos_selected", { count: markedForDeletion.length })}
+          {t("confirmation.selected_count", {
+            count: markedForDeletion.length,
+          })}
         </Text>
         <TouchableOpacity
           style={[
@@ -113,7 +117,9 @@ export default function ConfirmationScreen() {
           disabled={markedForDeletion.length === 0 || isDeleting}
         >
           <Text style={styles.confirmButtonText}>
-            {isDeleting ? t("deleting") : t("confirm_delete")}
+            {isDeleting
+              ? t("confirmation.deleting_button")
+              : t("confirmation.delete_button")}
           </Text>
         </TouchableOpacity>
       </View>
