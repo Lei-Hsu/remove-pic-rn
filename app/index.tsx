@@ -1,5 +1,6 @@
 import { useRouter } from "expo-router";
 import React, { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import {
   ActivityIndicator,
   SafeAreaView,
@@ -26,6 +27,7 @@ export default function HomeScreen() {
   const { loadPhotos, photos, hasLoaded } = usePhotoLibrary();
   const { markForDeletion, markedForDeletion } = useDeletion();
   const router = useRouter();
+  const { t } = useTranslation();
 
   useEffect(() => {
     loadPhotos(50); // Load initial batch
@@ -50,13 +52,13 @@ export default function HomeScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>Clean Gallery</Text>
+        <Text style={styles.title}>{t("clean_gallery")}</Text>
         <TouchableOpacity
           style={styles.reviewButton}
           onPress={() => router.push("/confirmation")}
         >
           <Text style={styles.reviewButtonText}>
-            Review ({markedForDeletion.length})
+            {t("review_count", { count: markedForDeletion.length })}
           </Text>
         </TouchableOpacity>
       </View>

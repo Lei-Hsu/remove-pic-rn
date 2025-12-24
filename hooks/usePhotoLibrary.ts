@@ -1,11 +1,13 @@
 import * as MediaLibrary from "expo-media-library";
 import { useCallback, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Alert, Linking } from "react-native";
 
 export const usePhotoLibrary = () => {
   const [permissionResponse, requestPermission] = MediaLibrary.usePermissions();
   const [photos, setPhotos] = useState<MediaLibrary.Asset[]>([]);
   const [hasLoaded, setHasLoaded] = useState(false);
+  const { t } = useTranslation();
 
   const requestAccess = useCallback(async () => {
     try {
@@ -16,21 +18,17 @@ export const usePhotoLibrary = () => {
       if (status === "granted") return true;
 
       if (!canAskAgain) {
-        Alert.alert(
-          "Permission Required",
-          "Please enable photo access in settings to use this app.",
-          [
-            { text: "Open Settings", onPress: Linking.openSettings },
-            { text: "Cancel", style: "cancel" },
-          ]
-        );
+        Alert.alert(t("permission_required"), t("permission_message"), [
+          { text: t("open_settings"), onPress: Linking.openSettings },
+          { text: t("cancel"), style: "cancel" },
+        ]);
       }
       return false;
     } catch (e) {
       console.error(e);
       return false;
     }
-  }, [permissionResponse, requestPermission]);
+  }, [permissionResponse, requestPermission, t]);
 
   const loadPhotos = useCallback(
     async (first = 50) => {
@@ -58,7 +56,7 @@ export const usePhotoLibrary = () => {
       return true;
     } catch (error) {
       console.error("Delete failed", error);
-      Alert.alert("Delete Failed", "Could not delete photos.");
+      Alert.alert(t("delete_failed"), t("delete_failed_message"));
       return false;
     }
   };

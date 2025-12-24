@@ -1,9 +1,8 @@
 import { Asset } from "expo-media-library";
 import React from "react";
-import { Dimensions, Image, StyleSheet, Text, View } from "react-native";
+import { useTranslation } from "react-i18next";
+import { Image, StyleSheet, Text, View } from "react-native";
 import Swiper from "react-native-deck-swiper";
-
-const SCREEN_WIDTH = Dimensions.get("window").width;
 
 interface DeletionSwiperProps {
   photos: Asset[];
@@ -18,10 +17,12 @@ export const DeletionSwiper: React.FC<DeletionSwiperProps> = ({
   onSwipeRight,
   onSwipedAll,
 }) => {
+  const { t } = useTranslation();
+
   if (!photos || photos.length === 0) {
     return (
       <View style={styles.container}>
-        <Text style={styles.text}>No photos to show</Text>
+        <Text style={styles.text}>{t("no_photos")}</Text>
       </View>
     );
   }
@@ -56,7 +57,7 @@ export const DeletionSwiper: React.FC<DeletionSwiperProps> = ({
         cardVerticalMargin={20}
         overlayLabels={{
           left: {
-            title: "DELETE",
+            title: t("delete"),
             style: {
               label: {
                 backgroundColor: "red",
@@ -74,7 +75,7 @@ export const DeletionSwiper: React.FC<DeletionSwiperProps> = ({
             },
           },
           right: {
-            title: "KEEP",
+            title: t("keep"),
             style: {
               label: {
                 backgroundColor: "green",
