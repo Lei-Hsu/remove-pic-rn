@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "pic-remove-rn",
-    "slug": "pic-remove-rn",
+    "name": "picswiper",
+    "slug": "picswiper",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",

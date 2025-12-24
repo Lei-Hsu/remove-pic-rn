@@ -1,9 +1,9 @@
-import 'dotenv/config';
+import "dotenv/config";
 
 export default {
   expo: {
-    name: "pic-remove-rn",
-    slug: "pic-remove-rn",
+    name: "picswiper",
+    slug: "picswiper",
     version: "1.0.0",
     orientation: "portrait",
     icon: "./assets/images/icon.png",
@@ -11,21 +11,21 @@ export default {
     userInterfaceStyle: "automatic",
     newArchEnabled: true,
     ios: {
-      supportsTablet: true
+      supportsTablet: true,
     },
     android: {
       adaptiveIcon: {
         backgroundColor: "#E6F4FE",
         foregroundImage: "./assets/images/android-icon-foreground.png",
         backgroundImage: "./assets/images/android-icon-background.png",
-        monochromeImage: "./assets/images/android-icon-monochrome.png"
+        monochromeImage: "./assets/images/android-icon-monochrome.png",
       },
       edgeToEdgeEnabled: true,
-      predictiveBackGestureEnabled: false
+      predictiveBackGestureEnabled: false,
     },
     web: {
       output: "static",
-      favicon: "./assets/images/favicon.png"
+      favicon: "./assets/images/favicon.png",
     },
     plugins: [
       "expo-router",
@@ -37,37 +37,37 @@ export default {
           resizeMode: "contain",
           backgroundColor: "#ffffff",
           dark: {
-            backgroundColor: "#000000"
-          }
-        }
+            backgroundColor: "#000000",
+          },
+        },
       ],
       [
         "react-native-google-mobile-ads",
         {
           androidAppId: "ca-app-pub-3940256099942544~3347511713",
-          iosAppId: "ca-app-pub-3940256099942544~1458002511"
-        }
+          iosAppId: "ca-app-pub-3940256099942544~1458002511",
+        },
       ],
       [
         "expo-media-library",
         {
           photosPermission: "Allow $(PRODUCT_NAME) to access your photos.",
           savePhotosPermission: "Allow $(PRODUCT_NAME) to save photos.",
-          isAccessMediaLocationEnabled: true
-        }
+          isAccessMediaLocationEnabled: true,
+        },
       ],
       "expo-localization",
-      "react-native-iap"
+      "react-native-iap",
     ],
     experiments: {
       typedRoutes: true,
-      reactCompiler: true
+      reactCompiler: true,
     },
     extra: {
       // Load environment variables for app configuration
       admobIosBannerId: process.env.EXPO_PUBLIC_ADMOB_IOS_BANNER_ID,
       admobIosInterstitialId: process.env.EXPO_PUBLIC_ADMOB_IOS_INTERSTITIAL_ID,
       iapProductId: process.env.EXPO_PUBLIC_IAP_PRODUCT_ID,
-    }
-  }
+    },
+  },
 };
