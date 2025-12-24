@@ -5,9 +5,7 @@ import {
   ActivityIndicator,
   SafeAreaView,
   StyleSheet,
-  Text,
   TouchableOpacity,
-  View,
 } from "react-native";
 import {
   BannerAd,
@@ -15,6 +13,8 @@ import {
   TestIds,
 } from "react-native-google-mobile-ads";
 import { DeletionSwiper } from "../components/DeletionSwiper";
+import { ThemedText } from "../components/themed-text";
+import { ThemedView } from "../components/themed-view";
 import { useDeletion } from "../context/DeletionContext";
 import { usePhotoLibrary } from "../hooks/usePhotoLibrary";
 
@@ -51,19 +51,21 @@ export default function HomeScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.title}>{t("home.title")}</Text>
+      <ThemedView style={styles.header}>
+        <ThemedText type="title" style={styles.title}>
+          {t("home.title")}
+        </ThemedText>
         <TouchableOpacity
           style={styles.reviewButton}
           onPress={() => router.push("/confirmation")}
         >
-          <Text style={styles.reviewButtonText}>
+          <ThemedText style={styles.reviewButtonText}>
             {t("home.review_button", { count: markedForDeletion.length })}
-          </Text>
+          </ThemedText>
         </TouchableOpacity>
-      </View>
+      </ThemedView>
 
-      <View style={styles.content}>
+      <ThemedView style={styles.content}>
         {!hasLoaded ? (
           <ActivityIndicator size="large" color="#0000ff" />
         ) : (
@@ -74,9 +76,9 @@ export default function HomeScreen() {
             onSwipedAll={handleSwipedAll}
           />
         )}
-      </View>
+      </ThemedView>
 
-      <View style={styles.adContainer}>
+      <ThemedView style={styles.adContainer}>
         <BannerAd
           unitId={adUnitId}
           size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
@@ -84,7 +86,7 @@ export default function HomeScreen() {
             requestNonPersonalizedAdsOnly: true,
           }}
         />
-      </View>
+      </ThemedView>
     </SafeAreaView>
   );
 }

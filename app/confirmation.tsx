@@ -7,15 +7,15 @@ import {
   Image,
   SafeAreaView,
   StyleSheet,
-  Text,
   TouchableOpacity,
-  View,
 } from "react-native";
 import {
   BannerAd,
   BannerAdSize,
   TestIds,
 } from "react-native-google-mobile-ads";
+import { ThemedText } from "../components/themed-text";
+import { ThemedView } from "../components/themed-view";
 import { useDeletion } from "../context/DeletionContext";
 import { usePhotoLibrary } from "../hooks/usePhotoLibrary";
 
@@ -61,37 +61,41 @@ export default function ConfirmationScreen() {
   };
 
   const renderItem = ({ item }: { item: any }) => (
-    <View style={styles.item}>
+    <ThemedView style={styles.item}>
       <Image source={{ uri: item.uri }} style={styles.thumbnail} />
-      <View style={styles.info}>
-        <Text style={styles.date}>
+      <ThemedView style={styles.info}>
+        <ThemedText style={styles.date}>
           {new Date(item.creationTime).toLocaleDateString()}
-        </Text>
-      </View>
+        </ThemedText>
+      </ThemedView>
       <TouchableOpacity
         onPress={() => unmarkForDeletion(item.id)}
         style={styles.removeButton}
       >
-        <Text style={styles.removeText}>{t("common.keep")}</Text>
+        <ThemedText style={styles.removeText}>{t("common.keep")}</ThemedText>
       </TouchableOpacity>
-    </View>
+    </ThemedView>
   );
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
+      <ThemedView style={styles.header}>
         <TouchableOpacity onPress={() => router.back()}>
-          <Text style={styles.backText}>{t("common.back")}</Text>
+          <ThemedText style={styles.backText}>{t("common.back")}</ThemedText>
         </TouchableOpacity>
-        <Text style={styles.title}>{t("confirmation.title")}</Text>
-        <View style={{ width: 50 }} />
-      </View>
+        <ThemedText type="title" style={styles.title}>
+          {t("confirmation.title")}
+        </ThemedText>
+        <ThemedView style={{ width: 50 }} />
+      </ThemedView>
 
-      <View style={styles.content}>
+      <ThemedView style={styles.content}>
         {markedForDeletion.length === 0 ? (
-          <View style={styles.emptyContainer}>
-            <Text style={styles.emptyText}>{t("confirmation.no_photos")}</Text>
-          </View>
+          <ThemedView style={styles.emptyContainer}>
+            <ThemedText style={styles.emptyText}>
+              {t("confirmation.no_photos")}
+            </ThemedText>
+          </ThemedView>
         ) : (
           <FlatList
             data={markedForDeletion}
@@ -100,14 +104,14 @@ export default function ConfirmationScreen() {
             contentContainerStyle={styles.list}
           />
         )}
-      </View>
+      </ThemedView>
 
-      <View style={styles.footer}>
-        <Text style={styles.summaryText}>
+      <ThemedView style={styles.footer}>
+        <ThemedText style={styles.summaryText}>
           {t("confirmation.selected_count", {
             count: markedForDeletion.length,
           })}
-        </Text>
+        </ThemedText>
         <TouchableOpacity
           style={[
             styles.confirmButton,
@@ -116,14 +120,14 @@ export default function ConfirmationScreen() {
           onPress={handleConfirm}
           disabled={markedForDeletion.length === 0 || isDeleting}
         >
-          <Text style={styles.confirmButtonText}>
+          <ThemedText style={styles.confirmButtonText}>
             {isDeleting
               ? t("confirmation.deleting_button")
               : t("confirmation.delete_button")}
-          </Text>
+          </ThemedText>
         </TouchableOpacity>
-      </View>
-      <View style={styles.adContainer}>
+      </ThemedView>
+      <ThemedView style={styles.adContainer}>
         <BannerAd
           unitId={adUnitId}
           size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
@@ -131,7 +135,7 @@ export default function ConfirmationScreen() {
             requestNonPersonalizedAdsOnly: true,
           }}
         />
-      </View>
+      </ThemedView>
     </SafeAreaView>
   );
 }

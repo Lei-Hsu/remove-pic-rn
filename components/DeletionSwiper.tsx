@@ -1,8 +1,10 @@
 import { Asset } from "expo-media-library";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { Image, StyleSheet, Text, View } from "react-native";
+import { Image, StyleSheet } from "react-native";
 import Swiper from "react-native-deck-swiper";
+import { ThemedText } from "./themed-text";
+import { ThemedView } from "./themed-view";
 
 interface DeletionSwiperProps {
   photos: Asset[];
@@ -21,31 +23,31 @@ export const DeletionSwiper: React.FC<DeletionSwiperProps> = ({
 
   if (!photos || photos.length === 0) {
     return (
-      <View style={styles.container}>
-        <Text style={styles.text}>{t("home.no_photos")}</Text>
-      </View>
+      <ThemedView style={styles.container}>
+        <ThemedText style={styles.text}>{t("home.no_photos")}</ThemedText>
+      </ThemedView>
     );
   }
 
   return (
-    <View style={styles.container}>
+    <ThemedView style={styles.container}>
       <Swiper
         cards={photos}
         renderCard={(card) => {
           // Check if card is null/undefined just in case
-          if (!card) return <View style={styles.card} />;
+          if (!card) return <ThemedView style={styles.card} />;
 
           return (
-            <View style={styles.card}>
+            <ThemedView style={styles.card}>
               <Image
                 source={{ uri: card.uri }}
                 style={styles.image}
                 resizeMode="cover"
               />
-              <Text style={styles.date}>
+              <ThemedText style={styles.date}>
                 {new Date(card.creationTime).toLocaleDateString()}
-              </Text>
-            </View>
+              </ThemedText>
+            </ThemedView>
           );
         }}
         onSwipedLeft={onSwipeLeft}
@@ -94,7 +96,7 @@ export const DeletionSwiper: React.FC<DeletionSwiperProps> = ({
           },
         }}
       />
-    </View>
+    </ThemedView>
   );
 };
 
