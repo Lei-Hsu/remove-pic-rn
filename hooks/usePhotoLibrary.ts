@@ -7,11 +7,14 @@ export const usePhotoLibrary = () => {
   const [permissionResponse, requestPermission] = MediaLibrary.usePermissions();
   const [photos, setPhotos] = useState<MediaLibrary.Asset[]>([]);
   const [hasLoaded, setHasLoaded] = useState(false);
+  const [endCursor, setEndCursor] = useState<string | undefined>(undefined);
+  const [hasMorePhotos, setHasMorePhotos] = useState(false);
+  const [totalPhotosLoaded, setTotalPhotosLoaded] = useState(0);
   const { t } = useTranslation();
 
   const requestAccess = useCallback(async () => {
     try {
-      // Check logical flow for permissions
+      // 檢查權限的邏輯流程
       if (permissionResponse?.status === "granted") return true;
 
       const { status, canAskAgain } = await requestPermission();
@@ -34,27 +37,53 @@ export const usePhotoLibrary = () => {
   }, [permissionResponse, requestPermission, t]);
 
   const loadPhotos = useCallback(
-    async (first = 50) => {
+    async (first = 50, loadMore = false) => {
       const hasAccess = await requestAccess();
       if (!hasAccess) return;
 
-      const { assets } = await MediaLibrary.getAssetsAsync({
+      const result = await MediaLibrary.getAssetsAsync({
         mediaType: "photo",
         first: first,
         sortBy: ["creationTime"],
+        after: loadMore ? endCursor : undefined,
       });
-      setPhotos(assets);
+
+      if (loadMore) {
+        // 追加到現有照片
+        setPhotos((current) => [...current, ...result.assets]);
+        setTotalPhotosLoaded((current) => current + result.assets.length);
+      } else {
+        // 初始加載
+        setPhotos(result.assets);
+        setTotalPhotosLoaded(result.assets.length);
+      }
+
+      setEndCursor(result.endCursor);
+      setHasMorePhotos(result.hasNextPage);
       setHasLoaded(true);
     },
-    [requestAccess]
+    [requestAccess, endCursor]
+  );
+
+  const loadNextBatch = useCallback(
+    async (batchSize = 50) => {
+      if (!hasMorePhotos) {
+        return;
+      }
+      await loadPhotos(batchSize, true);
+    },
+    [hasMorePhotos, loadPhotos]
   );
 
   const deletePhotos = async (assetsToDelete: MediaLibrary.Asset[]) => {
     try {
       await MediaLibrary.deleteAssetsAsync(assetsToDelete);
-      // Optimistic update
+      // 樂觀更新
       setPhotos((current) =>
-        current.filter((p) => !assetsToDelete.find((d) => d.id === p.id))
+        current.filter(
+          (photo) =>
+            !assetsToDelete.find((deletedPhoto) => deletedPhoto.id === photo.id)
+        )
       );
       return true;
     } catch (error) {
@@ -69,7 +98,10 @@ export const usePhotoLibrary = () => {
     requestAccess,
     photos,
     loadPhotos,
+    loadNextBatch,
     deletePhotos,
     hasLoaded,
+    hasMorePhotos,
+    totalPhotosLoaded,
   };
 };

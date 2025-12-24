@@ -8,9 +8,11 @@ import { ThemedView } from "./themed-view";
 
 interface DeletionSwiperProps {
   photos: Asset[];
-  onSwipeLeft: (cardIndex: number) => void; // Delete
-  onSwipeRight: (cardIndex: number) => void; // Keep
+  onSwipeLeft: (cardIndex: number) => void; // 刪除
+  onSwipeRight: (cardIndex: number) => void; // 保留
   onSwipedAll: () => void;
+  currentIndex?: number; // 追蹤當前卡片位置
+  onCardIndexChanged?: (index: number) => void; // 卡片索引變更時的回調
 }
 
 export const DeletionSwiper: React.FC<DeletionSwiperProps> = ({
@@ -18,6 +20,8 @@ export const DeletionSwiper: React.FC<DeletionSwiperProps> = ({
   onSwipeLeft,
   onSwipeRight,
   onSwipedAll,
+  currentIndex = 0,
+  onCardIndexChanged,
 }) => {
   const { t } = useTranslation();
 
@@ -34,7 +38,7 @@ export const DeletionSwiper: React.FC<DeletionSwiperProps> = ({
       <Swiper
         cards={photos}
         renderCard={(card) => {
-          // Check if card is null/undefined just in case
+          // 檢查卡片是否為 null/undefined 以防萬一
           if (!card) return <ThemedView style={styles.card} />;
 
           return (
@@ -53,7 +57,11 @@ export const DeletionSwiper: React.FC<DeletionSwiperProps> = ({
         onSwipedLeft={onSwipeLeft}
         onSwipedRight={onSwipeRight}
         onSwipedAll={onSwipedAll}
-        cardIndex={0}
+        onSwiped={(cardIndex) => {
+          // 通知父組件卡片索引變更
+          onCardIndexChanged?.(cardIndex);
+        }}
+        cardIndex={currentIndex}
         backgroundColor={"transparent"}
         stackSize={3}
         cardVerticalMargin={20}
@@ -106,10 +114,10 @@ const styles = StyleSheet.create({
     // backgroundColor: '#F5F5F5',
     alignItems: "center",
     justifyContent: "center",
-    marginTop: -40, // Adjust for swiper default margins
+    marginTop: -40, // 調整 swiper 預設邊距
   },
   card: {
-    flex: 0.8, // Take up most of the screen
+    flex: 0.8, // 佔據大部分螢幕
     borderRadius: 20,
     borderWidth: 2,
     borderColor: "#E8E8E8",

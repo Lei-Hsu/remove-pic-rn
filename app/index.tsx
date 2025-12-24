@@ -1,8 +1,10 @@
+import Constants from "expo-constants";
 import { useRouter } from "expo-router";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   ActivityIndicator,
+  Platform,
   SafeAreaView,
   StyleSheet,
   TouchableOpacity,
@@ -16,21 +18,35 @@ import { DeletionSwiper } from "../components/DeletionSwiper";
 import { ThemedText } from "../components/themed-text";
 import { ThemedView } from "../components/themed-view";
 import { useDeletion } from "../context/DeletionContext";
+import { usePurchase } from "../context/PurchaseContext";
+import { useInterstitialAd } from "../hooks/useInterstitialAd";
 import { usePhotoLibrary } from "../hooks/usePhotoLibrary";
 
-// Use TestIds.BANNER for development
+// 從環境變量加載橫幅廣告單元 ID
 const adUnitId = __DEV__
   ? TestIds.BANNER
-  : "ca-app-pub-xxxxxxxxxxxxx/yyyyyyyyyy";
+  : Platform.OS === "ios"
+  ? Constants.expoConfig?.extra?.admobIosBannerId || ""
+  : ""; // Android 支援暫緩
 
 export default function HomeScreen() {
-  const { loadPhotos, photos, hasLoaded } = usePhotoLibrary();
+  const {
+    loadPhotos,
+    loadNextBatch,
+    photos,
+    hasLoaded,
+    hasMorePhotos,
+    totalPhotosLoaded,
+  } = usePhotoLibrary();
   const { markForDeletion, markedForDeletion } = useDeletion();
+  const { isPremium } = usePurchase();
+  const { showAd } = useInterstitialAd(isPremium);
   const router = useRouter();
   const { t } = useTranslation();
+  const [currentCardIndex, setCurrentCardIndex] = useState(0);
 
   useEffect(() => {
-    loadPhotos(50); // Load initial batch
+    loadPhotos(50); // 加載首批 50 張照片
   }, [loadPhotos]);
 
   const handleSwipeLeft = (index: number) => {
@@ -40,13 +56,37 @@ export default function HomeScreen() {
   };
 
   const handleSwipeRight = (index: number) => {
-    // Keep - do nothing
+    // 保留 - 什麼都不做
   };
 
   const handleSwipedAll = () => {
-    // Logic for when all cards are swiped
-    // For now, maybe navigate to confirmation if there are deletions?
-    // or load more? Simple version: just stay or show button.
+    // 所有卡片已滑動 - 檢查是否有更多照片
+    if (hasMorePhotos) {
+      console.log("[HomeScreen] All cards swiped but more photos available");
+    } else {
+      console.log("[HomeScreen] All photos swiped - no more available");
+    }
+  };
+
+  // 處理卡片索引變更 - 觸發分頁和廣告
+  const handleCardIndexChanged = async (index: number) => {
+    setCurrentCardIndex(index);
+    console.log(
+      `[HomeScreen] Card index changed to: ${index}, Total loaded: ${totalPhotosLoaded}`
+    );
+
+    // 每 50 張照片，顯示插頁式廣告並加載下一批
+    if (index > 0 && index % 50 === 0 && hasMorePhotos) {
+      console.log(`[HomeScreen] Reached 50-photo boundary at index ${index}`);
+
+      // 為非高級用戶顯示廣告
+      if (!isPremium) {
+        await showAd(); // 等待廣告關閉
+      }
+
+      // 加載下一批照片
+      await loadNextBatch(50);
+    }
   };
 
   return (
@@ -74,19 +114,24 @@ export default function HomeScreen() {
             onSwipeLeft={handleSwipeLeft}
             onSwipeRight={handleSwipeRight}
             onSwipedAll={handleSwipedAll}
+            currentIndex={currentCardIndex}
+            onCardIndexChanged={handleCardIndexChanged}
           />
         )}
       </ThemedView>
 
-      <ThemedView style={styles.adContainer}>
-        <BannerAd
-          unitId={adUnitId}
-          size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
-          requestOptions={{
-            requestNonPersonalizedAdsOnly: true,
-          }}
-        />
-      </ThemedView>
+      {/* 僅為非高級用戶顯示橫幅廣告 */}
+      {!isPremium && (
+        <ThemedView style={styles.adContainer}>
+          <BannerAd
+            unitId={adUnitId}
+            size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
+            requestOptions={{
+              requestNonPersonalizedAdsOnly: true,
+            }}
+          />
+        </ThemedView>
+      )}
     </SafeAreaView>
   );
 }
@@ -123,7 +168,7 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    zIndex: 1, // Swiper logic
+    zIndex: 1, // Swiper 邏輯
     position: "relative",
   },
   adContainer: {
