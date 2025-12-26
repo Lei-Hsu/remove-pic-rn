@@ -1,13 +1,45 @@
 import * as MediaLibrary from "expo-media-library";
+import * as FileSystem from "expo-file-system";
+
+/**
+ * 使用檔案系統 API 取得實際檔案大小
+ * 如果失敗則使用改進的估算方法
+ */
+async function getActualSize(asset: MediaLibrary.Asset): Promise<number> {
+  try {
+    const fileInfo = await FileSystem.getInfoAsync(asset.uri);
+
+    if (fileInfo.exists && "size" in fileInfo) {
+      return fileInfo.size;
+    }
+
+    return estimateSizeImproved(asset);
+  } catch (error) {
+    console.warn(`Failed to get file size for ${asset.id}:`, error);
+    return estimateSizeImproved(asset);
+  }
+}
+
+/**
+ * 改進的檔案大小估算
+ * 使用更真實的 JPEG 壓縮率 (0.3 bytes/pixel 而非 3)
+ */
+function estimateSizeImproved(asset: MediaLibrary.Asset): number {
+  const width = asset.width || 1920;
+  const height = asset.height || 1080;
+  // JPEG 通常壓縮到 0.2-0.5 bytes per pixel
+  // 使用保守的 0.3 以提高準確度
+  const bytesPerPixel = 0.3;
+  return Math.floor(width * height * bytesPerPixel);
+}
 
 /**
  * 計算多個媒體資產的總文件大小
- * 使用估計值（寬度 × 高度 × 3 bytes per pixel）
- * 注意：expo-media-library 不提供實際的 fileSize 在 AssetInfo 中
+ * 使用實際檔案大小,如果無法取得則使用改進的估算值
  *
  * @param assets - MediaLibrary.Asset 物件的陣列
  * @param maxWaitMs - 最大等待時間（預設 5000ms）
- * @returns Estimated total size in bytes
+ * @returns Total size in bytes
  */
 export async function calculateAssetsSize(
   assets: MediaLibrary.Asset[],
@@ -29,43 +61,23 @@ export async function calculateAssetsSize(
         totalSize += avgSize * remainingCount;
       }
       console.warn(
-        `File size calculation timeout after ${processedCount}/${assets.length} assets. Using estimation for remaining.`
+        `Timeout calculating ${assets.length - processedCount} remaining assets`
       );
       break;
     }
 
     try {
-      // 注意：expo-media-library 的 AssetInfo 不包含 fileSize 屬性
-      // 目前我們使用基于尺寸的估計值
-      // 為了準確的大小，考慮使用 expo-file-system 與 localUri
-      const size = estimateSize(asset);
+      const size = await getActualSize(asset);
       totalSize += size;
       processedCount++;
     } catch (error) {
-      // If estimation fails, use fallback
-      console.warn(
-        `Failed to estimate size for asset ${asset.id}, using default`
-      );
-      totalSize += estimateSize(asset);
+      console.warn(`Failed to get size for ${asset.id}, using estimate`);
+      totalSize += estimateSizeImproved(asset);
       processedCount++;
     }
   }
 
   return totalSize;
-}
-
-/**
- * 根據資產尺寸估計文件大小
- * 粗略公式：寬度 × 高度 × 3 bytes per pixel (for JPEG compression)
- *
- * @param asset - MediaLibrary.Asset 物件
- * @returns Estimated size in bytes
- */
-function estimateSize(asset: MediaLibrary.Asset): number {
-  const width = asset.width || 1920;
-  const height = asset.height || 1080;
-  // 假設 ~3 bytes per pixel for JPEG compression
-  return width * height * 3;
 }
 
 /**

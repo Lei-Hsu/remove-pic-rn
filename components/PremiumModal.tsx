@@ -27,17 +27,17 @@ export const PremiumModal: React.FC<PremiumModalProps> = ({
   const error = usePurchaseStore((state) => state.error);
 
   const handlePurchase = async () => {
-    await purchaseProduct();
+    const success = await purchaseProduct();
     // 如果購買成功，關閉彈窗
-    if (!error) {
+    if (success) {
       setTimeout(() => onClose(), 1500);
     }
   };
 
   const handleRestore = async () => {
-    await restorePurchases();
+    const success = await restorePurchases();
     // 如果恢復成功，關閉彈窗
-    if (!error) {
+    if (success) {
       setTimeout(() => onClose(), 1500);
     }
   };

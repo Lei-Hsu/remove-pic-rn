@@ -18,6 +18,7 @@ const resources = {
         ok: "OK",
         close: "Close",
         loading: "Loading...",
+        retry: "Retry",
       },
       home: {
         title: "Clean Gallery",
@@ -32,6 +33,7 @@ const resources = {
         selected_count: "{{count}} photos selected",
         delete_button: "Confirm Delete",
         deleting_button: "Deleting...",
+        calculating_button: "Calculating...",
         alert: {
           title: "Confirm Deletion",
           message:
@@ -48,6 +50,12 @@ const resources = {
       errors: {
         delete_failed: "Delete Failed",
         delete_failed_message: "Could not delete photos.",
+        initialization_failed: "Initialization Failed",
+        initialization_failed_message: "App initialization failed. Please try again.",
+        load_failed: "Load Failed",
+        load_failed_message: "Failed to load photos. Please try again.",
+        app_error: "Something went wrong",
+        unknown_error: "An unknown error occurred",
       },
       purchase: {
         not_available_title: "Not Available",
@@ -114,6 +122,7 @@ const resources = {
         ok: "確定",
         close: "關閉",
         loading: "載入中...",
+        retry: "重試",
       },
       home: {
         title: "清理相簿",
@@ -128,6 +137,7 @@ const resources = {
         selected_count: "已選擇 {{count}} 張照片",
         delete_button: "確認刪除",
         deleting_button: "刪除中...",
+        calculating_button: "計算中...",
         alert: {
           title: "確認刪除",
           message: "確定要刪除 {{count}} 張照片嗎？此動作無法復原。",
@@ -143,6 +153,12 @@ const resources = {
       errors: {
         delete_failed: "刪除失敗",
         delete_failed_message: "無法刪除照片。",
+        initialization_failed: "初始化失敗",
+        initialization_failed_message: "應用程式初始化失敗,請重試。",
+        load_failed: "載入失敗",
+        load_failed_message: "載入照片失敗,請重試。",
+        app_error: "發生錯誤",
+        unknown_error: "未知錯誤",
       },
       purchase: {
         not_available_title: "無法使用",
@@ -207,6 +223,7 @@ const resources = {
         ok: "确定",
         close: "关闭",
         loading: "加载中...",
+        retry: "重试",
       },
       home: {
         title: "清理相册",
@@ -221,6 +238,7 @@ const resources = {
         selected_count: "已选择 {{count}} 张照片",
         delete_button: "确认删除",
         deleting_button: "删除中...",
+        calculating_button: "计算中...",
         alert: {
           title: "确认删除",
           message: "确定要删除 {{count}} 张照片吗？此操作无法撤销。",
@@ -236,6 +254,12 @@ const resources = {
       errors: {
         delete_failed: "删除失败",
         delete_failed_message: "无法删除照片。",
+        initialization_failed: "初始化失败",
+        initialization_failed_message: "应用程序初始化失败,请重试。",
+        load_failed: "加载失败",
+        load_failed_message: "加载照片失败,请重试。",
+        app_error: "发生错误",
+        unknown_error: "未知错误",
       },
       purchase: {
         not_available_title: "无法使用",
@@ -300,6 +324,7 @@ const resources = {
         ok: "OK",
         close: "Đóng",
         loading: "Đang tải...",
+        retry: "Thử lại",
       },
       home: {
         title: "Dọn dẹp thư viện",
@@ -314,6 +339,7 @@ const resources = {
         selected_count: "{{count}} ảnh đã chọn",
         delete_button: "Xác nhận xóa",
         deleting_button: "Đang xóa...",
+        calculating_button: "Đang tính toán...",
         alert: {
           title: "Xác nhận xóa",
           message:
@@ -331,6 +357,12 @@ const resources = {
       errors: {
         delete_failed: "Xóa thất bại",
         delete_failed_message: "Không thể xóa ảnh.",
+        initialization_failed: "Khởi tạo thất bại",
+        initialization_failed_message: "Khởi tạo ứng dụng thất bại. Vui lòng thử lại.",
+        load_failed: "Tải thất bại",
+        load_failed_message: "Không thể tải ảnh. Vui lòng thử lại.",
+        app_error: "Đã xảy ra lỗi",
+        unknown_error: "Đã xảy ra lỗi không xác định",
       },
       purchase: {
         not_available_title: "Không khả dụng",
@@ -398,6 +430,7 @@ const resources = {
         ok: "ตกลง",
         close: "ปิด",
         loading: "กำลังโหลด...",
+        retry: "ลองอีกครั้ง",
       },
       home: {
         title: "ล้างแกลเลอรี",
@@ -412,6 +445,7 @@ const resources = {
         selected_count: "เลือก {{count}} รูป",
         delete_button: "ยืนยันการลบ",
         deleting_button: "กำลังลบ...",
+        calculating_button: "กำลังคำนวณ...",
         alert: {
           title: "ยืนยันการลบ",
           message:
@@ -426,8 +460,14 @@ const resources = {
         open_settings: "เปิดการตั้งค่า",
       },
       errors: {
-        delete_failed: "การลบ้มเหลว",
+        delete_failed: "การลบล้มเหลว",
         delete_failed_message: "ไม่สามารถลบรูปภาพได้",
+        initialization_failed: "การเริ่มต้นล้มเหลว",
+        initialization_failed_message: "การเริ่มต้นแอปล้มเหลว โปรดลองอีกครั้ง",
+        load_failed: "การโหลดล้มเหลว",
+        load_failed_message: "ไม่สามารถโหลดรูปภาพได้ โปรดลองอีกครั้ง",
+        app_error: "เกิดข้อผิดพลาด",
+        unknown_error: "เกิดข้อผิดพลาดที่ไม่ทราบสาเหตุ",
       },
       purchase: {
         not_available_title: "ไม่สามารถใช้งานได้",
@@ -493,6 +533,7 @@ const resources = {
         ok: "OK",
         close: "Tutup",
         loading: "Memuat...",
+        retry: "Coba Lagi",
       },
       home: {
         title: "Bersihkan Galeri",
@@ -507,6 +548,7 @@ const resources = {
         selected_count: "{{count}} foto dipilih",
         delete_button: "Konfirmasi Hapus",
         deleting_button: "Menghapus...",
+        calculating_button: "Menghitung...",
         alert: {
           title: "Konfirmasi Hapus",
           message:
@@ -524,6 +566,12 @@ const resources = {
       errors: {
         delete_failed: "Gagal Menghapus",
         delete_failed_message: "Tidak dapat menghapus foto.",
+        initialization_failed: "Inisialisasi Gagal",
+        initialization_failed_message: "Inisialisasi aplikasi gagal. Silakan coba lagi.",
+        load_failed: "Gagal Memuat",
+        load_failed_message: "Gagal memuat foto. Silakan coba lagi.",
+        app_error: "Terjadi kesalahan",
+        unknown_error: "Terjadi kesalahan yang tidak diketahui",
       },
       purchase: {
         not_available_title: "Tidak Tersedia",

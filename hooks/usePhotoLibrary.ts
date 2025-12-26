@@ -41,28 +41,36 @@ export const usePhotoLibrary = () => {
       const hasAccess = await requestAccess();
       if (!hasAccess) return;
 
-      const result = await MediaLibrary.getAssetsAsync({
-        mediaType: "photo",
-        first: first,
-        sortBy: ["creationTime"],
-        after: loadMore ? endCursor : undefined,
-      });
+      try {
+        const result = await MediaLibrary.getAssetsAsync({
+          mediaType: "photo",
+          first: first,
+          sortBy: ["creationTime"],
+          after: loadMore ? endCursor : undefined,
+        });
 
-      if (loadMore) {
-        // 追加到現有照片
-        setPhotos((current) => [...current, ...result.assets]);
-        setTotalPhotosLoaded((current) => current + result.assets.length);
-      } else {
-        // 初始加載
-        setPhotos(result.assets);
-        setTotalPhotosLoaded(result.assets.length);
+        if (loadMore) {
+          // 追加到現有照片
+          setPhotos((current) => [...current, ...result.assets]);
+          setTotalPhotosLoaded((current) => current + result.assets.length);
+        } else {
+          // 初始加載
+          setPhotos(result.assets);
+          setTotalPhotosLoaded(result.assets.length);
+        }
+
+        setEndCursor(result.endCursor);
+        setHasMorePhotos(result.hasNextPage);
+        setHasLoaded(true);
+      } catch (error) {
+        console.error("Failed to load photos:", error);
+        Alert.alert(
+          t("errors.load_failed"),
+          t("errors.load_failed_message")
+        );
       }
-
-      setEndCursor(result.endCursor);
-      setHasMorePhotos(result.hasNextPage);
-      setHasLoaded(true);
     },
-    [requestAccess, endCursor]
+    [requestAccess, endCursor, t]
   );
 
   const loadNextBatch = useCallback(

@@ -51,6 +51,7 @@ export default function ConfirmationScreen() {
   const totalSpaceFreed = useStatisticsStore((state) => state.totalSpaceFreed());
   const router = useRouter();
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isCalculating, setIsCalculating] = useState(false);
   const [showStatsModal, setShowStatsModal] = useState(false);
   const [lastSessionStats, setLastSessionStats] = useState<{
     photosDeleted: number;
@@ -62,8 +63,10 @@ export default function ConfirmationScreen() {
     if (markedForDeletion.length === 0) return;
 
     // 先計算檔案大小（在刪除之前）
+    setIsCalculating(true);
     console.log("[Confirmation] Calculating file sizes...");
     const totalSize = await calculateAssetsSize(markedForDeletion);
+    setIsCalculating(false);
     console.log(`[Confirmation] Total size to delete: ${totalSize} bytes`);
 
     Alert.alert(
@@ -156,13 +159,16 @@ export default function ConfirmationScreen() {
         <TouchableOpacity
           style={[
             styles.confirmButton,
-            markedForDeletion.length === 0 && styles.disabledButton,
+            (markedForDeletion.length === 0 || isDeleting || isCalculating) &&
+              styles.disabledButton,
           ]}
           onPress={handleConfirm}
-          disabled={markedForDeletion.length === 0 || isDeleting}
+          disabled={markedForDeletion.length === 0 || isDeleting || isCalculating}
         >
           <ThemedText style={styles.confirmButtonText}>
-            {isDeleting
+            {isCalculating
+              ? t("confirmation.calculating_button")
+              : isDeleting
               ? t("confirmation.deleting_button")
               : t("confirmation.delete_button")}
           </ThemedText>

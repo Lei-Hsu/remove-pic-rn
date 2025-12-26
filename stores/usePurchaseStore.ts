@@ -13,8 +13,8 @@ interface PurchaseStore {
   error: string | null;
   isInitialized: boolean;
 
-  purchaseProduct: (t: any) => Promise<void>;
-  restorePurchases: (t: any) => Promise<void>;
+  purchaseProduct: (t: any) => Promise<boolean>;
+  restorePurchases: (t: any) => Promise<boolean>;
   loadPurchaseState: () => Promise<void>;
   savePurchaseState: (premium: boolean) => Promise<void>;
   initIAP: () => Promise<void>;
@@ -78,7 +78,7 @@ export const usePurchaseStore = create<PurchaseStore>((set, get) => ({
   purchaseProduct: async (t) => {
     if (Platform.OS !== "ios") {
       Alert.alert(t("purchase.not_available_title"), t("purchase.iap_ios_only"));
-      return;
+      return false;
     }
 
     set({ isLoading: true, error: null });
@@ -96,6 +96,7 @@ export const usePurchaseStore = create<PurchaseStore>((set, get) => ({
 
       await get().savePurchaseState(true);
       Alert.alert(t("purchase.success_title"), t("purchase.purchase_success_message"));
+      return true;
     } catch (error) {
       const err = error as IAP.PurchaseError;
       console.error("Purchase failed:", err);
@@ -110,6 +111,7 @@ export const usePurchaseStore = create<PurchaseStore>((set, get) => ({
         Alert.alert(t("purchase.purchase_failed_title"), errorMessage);
       }
       set({ error: errorMessage });
+      return false;
     } finally {
       set({ isLoading: false });
     }
@@ -118,7 +120,7 @@ export const usePurchaseStore = create<PurchaseStore>((set, get) => ({
   restorePurchases: async (t) => {
     if (Platform.OS !== "ios") {
       Alert.alert(t("purchase.not_available_title"), t("purchase.restore_ios_only"));
-      return;
+      return false;
     }
 
     set({ isLoading: true, error: null });
@@ -129,8 +131,10 @@ export const usePurchaseStore = create<PurchaseStore>((set, get) => ({
       if (availablePurchases.length > 0) {
         await get().savePurchaseState(true);
         Alert.alert(t("purchase.success_title"), t("purchase.restore_success_message"));
+        return true;
       } else {
         Alert.alert(t("purchase.no_purchases_title"), t("purchase.no_purchases_message"));
+        return false;
       }
     } catch (error) {
       const err = error as IAP.PurchaseError;
@@ -138,6 +142,7 @@ export const usePurchaseStore = create<PurchaseStore>((set, get) => ({
       const errorMessage = err.message || t("purchase.restore_failed_title");
       set({ error: errorMessage });
       Alert.alert(t("purchase.restore_failed_title"), t("purchase.restore_failed_message"));
+      return false;
     } finally {
       set({ isLoading: false });
     }
