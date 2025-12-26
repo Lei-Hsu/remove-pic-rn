@@ -1,5 +1,4 @@
 import Constants from "expo-constants";
-import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
@@ -19,6 +18,7 @@ import {
 import { StatisticsModal } from "../components/StatisticsModal";
 import { ThemedText } from "../components/themed-text";
 import { ThemedView } from "../components/themed-view";
+import { useAppNavigation } from "../hooks/useAppNavigation";
 import { usePhotoLibrary } from "../hooks/usePhotoLibrary";
 import { useDeletionStore } from "../stores/useDeletionStore";
 import { usePurchaseStore } from "../stores/usePurchaseStore";
@@ -47,9 +47,13 @@ export default function ConfirmationScreen() {
   const { deletePhotos } = usePhotoLibrary();
   const isPremium = usePurchaseStore((state) => state.isPremium);
   const addSession = useStatisticsStore((state) => state.addSession);
-  const totalPhotosDeleted = useStatisticsStore((state) => state.totalPhotosDeleted());
-  const totalSpaceFreed = useStatisticsStore((state) => state.totalSpaceFreed());
-  const router = useRouter();
+  const totalPhotosDeleted = useStatisticsStore((state) =>
+    state.totalPhotosDeleted()
+  );
+  const totalSpaceFreed = useStatisticsStore((state) =>
+    state.totalSpaceFreed()
+  );
+  const nav = useAppNavigation();
   const [isDeleting, setIsDeleting] = useState(false);
   const [isCalculating, setIsCalculating] = useState(false);
   const [showStatsModal, setShowStatsModal] = useState(false);
@@ -124,7 +128,7 @@ export default function ConfirmationScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <ThemedView style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()}>
+        <TouchableOpacity onPress={nav.goBack}>
           <ThemedText style={styles.backText}>{t("common.back")}</ThemedText>
         </TouchableOpacity>
         <ThemedText type="title" style={styles.title}>
@@ -163,7 +167,9 @@ export default function ConfirmationScreen() {
               styles.disabledButton,
           ]}
           onPress={handleConfirm}
-          disabled={markedForDeletion.length === 0 || isDeleting || isCalculating}
+          disabled={
+            markedForDeletion.length === 0 || isDeleting || isCalculating
+          }
         >
           <ThemedText style={styles.confirmButtonText}>
             {isCalculating
@@ -192,7 +198,7 @@ export default function ConfirmationScreen() {
         visible={showStatsModal}
         onClose={() => {
           setShowStatsModal(false);
-          router.back();
+          nav.goBack();
         }}
         sessionStats={lastSessionStats}
         totalPhotosDeleted={totalPhotosDeleted}

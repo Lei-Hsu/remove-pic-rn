@@ -60,7 +60,7 @@ export default function RootLayout() {
     };
   }, [t]);
 
-  const handleError = (error: Error, errorInfo: { componentStack: string }) => {
+  const handleError = (error: Error, errorInfo: { componentStack?: string | null }) => {
     console.error("Error caught by boundary:", error, errorInfo);
     // 可以在這裡加入錯誤追蹤服務 (如 Sentry)
   };

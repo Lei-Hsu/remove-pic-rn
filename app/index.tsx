@@ -1,5 +1,4 @@
 import Constants from "expo-constants";
-import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
@@ -18,6 +17,7 @@ import { DeletionSwiper } from "../components/DeletionSwiper";
 import { PremiumModal } from "../components/PremiumModal";
 import { ThemedText } from "../components/themed-text";
 import { ThemedView } from "../components/themed-view";
+import { useAppNavigation } from "../hooks/useAppNavigation";
 import { useInterstitialAd } from "../hooks/useInterstitialAd";
 import { usePhotoLibrary } from "../hooks/usePhotoLibrary";
 import { useDeletionStore } from "../stores/useDeletionStore";
@@ -54,7 +54,7 @@ export default function HomeScreen() {
   const { markForDeletion, markedForDeletion } = useDeletionStore();
   const isPremium = usePurchaseStore((state) => state.isPremium);
   const { showAd } = useInterstitialAd(isPremium);
-  const router = useRouter();
+  const nav = useAppNavigation();
   const { t } = useTranslation();
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
   const [showPremiumModal, setShowPremiumModal] = useState(false);
@@ -123,7 +123,7 @@ export default function HomeScreen() {
         </ThemedView>
         <TouchableOpacity
           style={styles.reviewButton}
-          onPress={() => router.push("/confirmation")}
+          onPress={nav.goToConfirmation}
         >
           <ThemedText style={styles.reviewButtonText}>
             {t("home.review_button", { count: markedForDeletion.length })}
