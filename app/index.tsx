@@ -15,6 +15,7 @@ import {
   TestIds,
 } from "react-native-google-mobile-ads";
 import { DeletionSwiper } from "../components/DeletionSwiper";
+import { PremiumModal } from "../components/PremiumModal";
 import { ThemedText } from "../components/themed-text";
 import { ThemedView } from "../components/themed-view";
 import { useDeletion } from "../context/DeletionContext";
@@ -38,6 +39,9 @@ const getAdUnitId = () => {
 
 const adUnitId = getAdUnitId();
 
+// 首次載入 50 張圖片
+const initialBatchSize = 50;
+
 export default function HomeScreen() {
   const {
     loadPhotos,
@@ -53,9 +57,10 @@ export default function HomeScreen() {
   const router = useRouter();
   const { t } = useTranslation();
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
+  const [showPremiumModal, setShowPremiumModal] = useState(false);
 
   useEffect(() => {
-    loadPhotos(50); // 加載首批 50 張照片
+    loadPhotos(initialBatchSize); // 加載首批 50 張照片
   }, [loadPhotos]);
 
   const handleSwipeLeft = (index: number) => {
@@ -101,9 +106,21 @@ export default function HomeScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <ThemedView style={styles.header}>
-        <ThemedText type="title" style={styles.title}>
-          {t("home.title")}
-        </ThemedText>
+        <ThemedView style={styles.headerTop}>
+          <ThemedText type="title" style={styles.title}>
+            {t("home.title")}
+          </ThemedText>
+          {!isPremium && (
+            <TouchableOpacity
+              style={styles.premiumButton}
+              onPress={() => setShowPremiumModal(true)}
+            >
+              <ThemedText style={styles.premiumButtonText}>
+                ⭐ {t("premium.upgrade")}
+              </ThemedText>
+            </TouchableOpacity>
+          )}
+        </ThemedView>
         <TouchableOpacity
           style={styles.reviewButton}
           onPress={() => router.push("/confirmation")}
@@ -141,6 +158,12 @@ export default function HomeScreen() {
           />
         </ThemedView>
       )}
+
+      {/* 高級版彈窗 */}
+      <PremiumModal
+        visible={showPremiumModal}
+        onClose={() => setShowPremiumModal(false)}
+      />
     </SafeAreaView>
   );
 }
@@ -151,19 +174,35 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
   },
   header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
     paddingHorizontal: 20,
     paddingVertical: 10,
     borderBottomWidth: 1,
     borderBottomColor: "#eee",
     zIndex: 10,
   },
+  headerTop: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 10,
+  },
   title: {
     fontSize: 24,
     fontWeight: "bold",
     color: "#333",
+    flex: 1,
+  },
+  premiumButton: {
+    backgroundColor: "#FFD700",
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 16,
+    marginLeft: 10,
+  },
+  premiumButtonText: {
+    color: "#333",
+    fontWeight: "700",
+    fontSize: 14,
   },
   reviewButton: {
     backgroundColor: "#007AFF", // Blue
