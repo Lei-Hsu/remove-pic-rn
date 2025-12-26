@@ -19,10 +19,10 @@ import {
 import { StatisticsModal } from "../components/StatisticsModal";
 import { ThemedText } from "../components/themed-text";
 import { ThemedView } from "../components/themed-view";
-import { useDeletion } from "../context/DeletionContext";
-import { usePurchase } from "../context/PurchaseContext";
-import { useStatistics } from "../context/StatisticsContext";
 import { usePhotoLibrary } from "../hooks/usePhotoLibrary";
+import { useDeletionStore } from "../stores/useDeletionStore";
+import { usePurchaseStore } from "../stores/usePurchaseStore";
+import { useStatisticsStore } from "../stores/useStatisticsStore";
 import { calculateAssetsSize } from "../utils/fileSize";
 
 // 從環境變數載入橫幅廣告單元 ID
@@ -43,10 +43,12 @@ const adUnitId = getAdUnitId();
 
 export default function ConfirmationScreen() {
   const { markedForDeletion, unmarkForDeletion, clearDeletionList } =
-    useDeletion();
+    useDeletionStore();
   const { deletePhotos } = usePhotoLibrary();
-  const { isPremium } = usePurchase();
-  const { addSession, totalPhotosDeleted, totalSpaceFreed } = useStatistics();
+  const isPremium = usePurchaseStore((state) => state.isPremium);
+  const addSession = useStatisticsStore((state) => state.addSession);
+  const totalPhotosDeleted = useStatisticsStore((state) => state.totalPhotosDeleted());
+  const totalSpaceFreed = useStatisticsStore((state) => state.totalSpaceFreed());
   const router = useRouter();
   const [isDeleting, setIsDeleting] = useState(false);
   const [showStatsModal, setShowStatsModal] = useState(false);

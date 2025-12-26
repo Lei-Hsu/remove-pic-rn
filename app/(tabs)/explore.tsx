@@ -13,19 +13,17 @@ import { ThemedText } from "../../components/themed-text";
 import { ThemedView } from "../../components/themed-view";
 import {
   DeletionSession,
-  useStatistics,
-} from "../../context/StatisticsContext";
+  useStatisticsStore,
+} from "../../stores/useStatisticsStore";
 import { formatBytes } from "../../utils/fileSize";
 
 export default function StatisticsScreen() {
   const { t } = useTranslation();
-  const {
-    sessions,
-    totalPhotosDeleted,
-    totalSpaceFreed,
-    clearHistory,
-    isLoading,
-  } = useStatistics();
+  const sessions = useStatisticsStore((state) => state.sessions);
+  const totalPhotosDeleted = useStatisticsStore((state) => state.totalPhotosDeleted());
+  const totalSpaceFreed = useStatisticsStore((state) => state.totalSpaceFreed());
+  const clearHistory = useStatisticsStore((state) => state.clearHistory);
+  const isLoading = useStatisticsStore((state) => state.isLoading);
 
   const handleClearHistory = () => {
     Alert.alert(

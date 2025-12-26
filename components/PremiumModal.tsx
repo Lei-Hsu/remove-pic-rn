@@ -7,7 +7,8 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { usePurchase } from "../context/PurchaseContext";
+import { usePurchaseActions } from "../hooks/usePurchaseActions";
+import { usePurchaseStore } from "../stores/usePurchaseStore";
 import { ThemedText } from "./themed-text";
 import { ThemedView } from "./themed-view";
 
@@ -21,7 +22,9 @@ export const PremiumModal: React.FC<PremiumModalProps> = ({
   onClose,
 }) => {
   const { t } = useTranslation();
-  const { purchaseProduct, restorePurchases, isLoading, error } = usePurchase();
+  const { purchaseProduct, restorePurchases } = usePurchaseActions();
+  const isLoading = usePurchaseStore((state) => state.isLoading);
+  const error = usePurchaseStore((state) => state.error);
 
   const handlePurchase = async () => {
     await purchaseProduct();

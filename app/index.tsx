@@ -18,10 +18,10 @@ import { DeletionSwiper } from "../components/DeletionSwiper";
 import { PremiumModal } from "../components/PremiumModal";
 import { ThemedText } from "../components/themed-text";
 import { ThemedView } from "../components/themed-view";
-import { useDeletion } from "../context/DeletionContext";
-import { usePurchase } from "../context/PurchaseContext";
 import { useInterstitialAd } from "../hooks/useInterstitialAd";
 import { usePhotoLibrary } from "../hooks/usePhotoLibrary";
+import { useDeletionStore } from "../stores/useDeletionStore";
+import { usePurchaseStore } from "../stores/usePurchaseStore";
 
 // 從環境變量加載橫幅廣告單元 ID
 const getAdUnitId = () => {
@@ -51,8 +51,8 @@ export default function HomeScreen() {
     hasMorePhotos,
     totalPhotosLoaded,
   } = usePhotoLibrary();
-  const { markForDeletion, markedForDeletion } = useDeletion();
-  const { isPremium } = usePurchase();
+  const { markForDeletion, markedForDeletion } = useDeletionStore();
+  const isPremium = usePurchaseStore((state) => state.isPremium);
   const { showAd } = useInterstitialAd(isPremium);
   const router = useRouter();
   const { t } = useTranslation();
