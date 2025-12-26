@@ -7,11 +7,15 @@ export default {
     version: "1.0.0",
     orientation: "portrait",
     icon: "./assets/images/icon.png",
-    scheme: "picremovern",
+    scheme: "picswiper",
     userInterfaceStyle: "automatic",
     newArchEnabled: true,
     ios: {
       supportsTablet: true,
+      infoPlist: {
+        NSUserTrackingUsageDescription:
+          "This helps us show you relevant ads and support free features.",
+      },
     },
     android: {
       adaptiveIcon: {
