@@ -1,112 +1,260 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import React from "react";
+import { useTranslation } from "react-i18next";
+import {
+  Alert,
+  FlatList,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { StatsCard } from "../../components/StatsCard";
+import { ThemedText } from "../../components/themed-text";
+import { ThemedView } from "../../components/themed-view";
+import {
+  DeletionSession,
+  useStatistics,
+} from "../../context/StatisticsContext";
+import { formatBytes } from "../../utils/fileSize";
 
-import { Collapsible } from '@/components/ui/collapsible';
-import { ExternalLink } from '@/components/external-link';
-import ParallaxScrollView from '@/components/parallax-scroll-view';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { IconSymbol } from '@/components/ui/icon-symbol';
-import { Fonts } from '@/constants/theme';
+export default function StatisticsScreen() {
+  const { t } = useTranslation();
+  const {
+    sessions,
+    totalPhotosDeleted,
+    totalSpaceFreed,
+    clearHistory,
+    isLoading,
+  } = useStatistics();
 
-export default function TabTwoScreen() {
-  return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#D0D0D0', dark: '#353636' }}
-      headerImage={
-        <IconSymbol
-          size={310}
-          color="#808080"
-          name="chevron.left.forwardslash.chevron.right"
-          style={styles.headerImage}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText
-          type="title"
-          style={{
-            fontFamily: Fonts.rounded,
-          }}>
-          Explore
+  const handleClearHistory = () => {
+    Alert.alert(
+      t("statistics.clear_history_title"),
+      t("statistics.clear_history_message"),
+      [
+        { text: t("common.cancel"), style: "cancel" },
+        {
+          text: t("common.delete_action"),
+          style: "destructive",
+          onPress: clearHistory,
+        },
+      ]
+    );
+  };
+
+  const formatDate = (isoString: string) => {
+    const date = new Date(isoString);
+    return date.toLocaleDateString() + " " + date.toLocaleTimeString();
+  };
+
+  const renderSessionItem = ({ item }: { item: DeletionSession }) => (
+    <ThemedView style={styles.sessionItem}>
+      <View style={styles.sessionHeader}>
+        <ThemedText style={styles.sessionDate}>
+          {formatDate(item.date)}
         </ThemedText>
+      </View>
+      <View style={styles.sessionStats}>
+        <View style={styles.sessionStat}>
+          <ThemedText style={styles.sessionStatIcon}>📸</ThemedText>
+          <ThemedText style={styles.sessionStatValue}>
+            {item.photosDeleted}
+          </ThemedText>
+          <ThemedText style={styles.sessionStatLabel}>
+            {t("statistics.photos")}
+          </ThemedText>
+        </View>
+        <View style={styles.sessionStat}>
+          <ThemedText style={styles.sessionStatIcon}>💾</ThemedText>
+          <ThemedText style={styles.sessionStatValue}>
+            {formatBytes(item.spaceFreed)}
+          </ThemedText>
+          <ThemedText style={styles.sessionStatLabel}>
+            {t("statistics.freed")}
+          </ThemedText>
+        </View>
+      </View>
+    </ThemedView>
+  );
+
+  if (isLoading) {
+    return (
+      <ThemedView style={styles.container}>
+        <ThemedText>{t("common.loading")}</ThemedText>
       </ThemedView>
-      <ThemedText>This app includes example code to help you get started.</ThemedText>
-      <Collapsible title="File-based routing">
-        <ThemedText>
-          This app has two screens:{' '}
-          <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> and{' '}
-          <ThemedText type="defaultSemiBold">app/(tabs)/explore.tsx</ThemedText>
-        </ThemedText>
-        <ThemedText>
-          The layout file in <ThemedText type="defaultSemiBold">app/(tabs)/_layout.tsx</ThemedText>{' '}
-          sets up the tab navigator.
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/router/introduction">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Android, iOS, and web support">
-        <ThemedText>
-          You can open this project on Android, iOS, and the web. To open the web version, press{' '}
-          <ThemedText type="defaultSemiBold">w</ThemedText> in the terminal running this project.
-        </ThemedText>
-      </Collapsible>
-      <Collapsible title="Images">
-        <ThemedText>
-          For static images, you can use the <ThemedText type="defaultSemiBold">@2x</ThemedText> and{' '}
-          <ThemedText type="defaultSemiBold">@3x</ThemedText> suffixes to provide files for
-          different screen densities
-        </ThemedText>
-        <Image
-          source={require('@/assets/images/react-logo.png')}
-          style={{ width: 100, height: 100, alignSelf: 'center' }}
-        />
-        <ExternalLink href="https://reactnative.dev/docs/images">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Light and dark mode components">
-        <ThemedText>
-          This template has light and dark mode support. The{' '}
-          <ThemedText type="defaultSemiBold">useColorScheme()</ThemedText> hook lets you inspect
-          what the user&apos;s current color scheme is, and so you can adjust UI colors accordingly.
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/develop/user-interface/color-themes/">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Animations">
-        <ThemedText>
-          This template includes an example of an animated component. The{' '}
-          <ThemedText type="defaultSemiBold">components/HelloWave.tsx</ThemedText> component uses
-          the powerful{' '}
-          <ThemedText type="defaultSemiBold" style={{ fontFamily: Fonts.mono }}>
-            react-native-reanimated
-          </ThemedText>{' '}
-          library to create a waving hand animation.
-        </ThemedText>
-        {Platform.select({
-          ios: (
-            <ThemedText>
-              The <ThemedText type="defaultSemiBold">components/ParallaxScrollView.tsx</ThemedText>{' '}
-              component provides a parallax effect for the header image.
+    );
+  }
+
+  return (
+    <ThemedView style={styles.container}>
+      <ScrollView style={styles.scrollView}>
+        {/* 標題 */}
+        <ThemedView style={styles.header}>
+          <ThemedText type="title" style={styles.title}>
+            {t("statistics.title")}
+          </ThemedText>
+        </ThemedView>
+
+        {/* 總覽卡片 */}
+        <ThemedView style={styles.summarySection}>
+          <StatsCard
+            icon="📸"
+            title={t("statistics.total_deleted")}
+            value={totalPhotosDeleted.toString()}
+            color="#007AFF"
+          />
+          <StatsCard
+            icon="💾"
+            title={t("statistics.space_freed")}
+            value={formatBytes(totalSpaceFreed)}
+            color="#34C759"
+          />
+          <StatsCard
+            icon="📊"
+            title={t("statistics.sessions")}
+            value={sessions.length.toString()}
+            color="#FF9500"
+          />
+        </ThemedView>
+
+        {/* 會話歷史 */}
+        <ThemedView style={styles.historySection}>
+          <View style={styles.historyHeader}>
+            <ThemedText type="subtitle" style={styles.historyTitle}>
+              {t("statistics.session_history")}
             </ThemedText>
-          ),
-        })}
-      </Collapsible>
-    </ParallaxScrollView>
+            {sessions.length > 0 && (
+              <TouchableOpacity onPress={handleClearHistory}>
+                <ThemedText style={styles.clearButton}>
+                  {t("statistics.clear_history")}
+                </ThemedText>
+              </TouchableOpacity>
+            )}
+          </View>
+
+          {sessions.length === 0 ? (
+            <ThemedView style={styles.emptyContainer}>
+              <ThemedText style={styles.emptyIcon}>📭</ThemedText>
+              <ThemedText style={styles.emptyText}>
+                {t("statistics.no_history")}
+              </ThemedText>
+            </ThemedView>
+          ) : (
+            <FlatList
+              data={sessions}
+              renderItem={renderSessionItem}
+              keyExtractor={(item) => item.id}
+              scrollEnabled={false}
+              contentContainerStyle={styles.sessionList}
+            />
+          )}
+        </ThemedView>
+      </ScrollView>
+    </ThemedView>
   );
 }
 
 const styles = StyleSheet.create({
-  headerImage: {
-    color: '#808080',
-    bottom: -90,
-    left: -35,
-    position: 'absolute',
+  container: {
+    flex: 1,
+    backgroundColor: "#f5f5f5",
   },
-  titleContainer: {
-    flexDirection: 'row',
-    gap: 8,
+  scrollView: {
+    flex: 1,
+  },
+  header: {
+    paddingHorizontal: 20,
+    paddingTop: 60,
+    paddingBottom: 20,
+    backgroundColor: "#fff",
+  },
+  title: {
+    fontSize: 32,
+    fontWeight: "bold",
+    color: "#333",
+  },
+  summarySection: {
+    paddingHorizontal: 20,
+    paddingVertical: 16,
+    backgroundColor: "#f5f5f5",
+  },
+  historySection: {
+    paddingHorizontal: 20,
+    paddingTop: 20,
+    paddingBottom: 40,
+  },
+  historyHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 16,
+  },
+  historyTitle: {
+    fontSize: 20,
+    fontWeight: "600",
+    color: "#333",
+  },
+  clearButton: {
+    fontSize: 14,
+    color: "#FF3B30",
+    fontWeight: "600",
+  },
+  sessionList: {
+    gap: 12,
+  },
+  sessionItem: {
+    backgroundColor: "#fff",
+    borderRadius: 12,
+    padding: 16,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 2,
+  },
+  sessionHeader: {
+    marginBottom: 12,
+  },
+  sessionDate: {
+    fontSize: 14,
+    color: "#666",
+  },
+  sessionStats: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+  },
+  sessionStat: {
+    alignItems: "center",
+    flex: 1,
+  },
+  sessionStatIcon: {
+    fontSize: 24,
+    marginBottom: 4,
+  },
+  sessionStatValue: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#333",
+    marginBottom: 2,
+  },
+  sessionStatLabel: {
+    fontSize: 12,
+    color: "#666",
+  },
+  emptyContainer: {
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 60,
+  },
+  emptyIcon: {
+    fontSize: 64,
+    marginBottom: 16,
+  },
+  emptyText: {
+    fontSize: 16,
+    color: "#999",
   },
 });

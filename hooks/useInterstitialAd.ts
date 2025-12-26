@@ -20,11 +20,20 @@ export const useInterstitialAd = (isPremium: boolean) => {
 
   // 從環境變量加載廣告單元 ID
   // 開發中使用測試 ID，生產中使用 .env 中的真實 ID
-  const adUnitId = __DEV__
-    ? TestIds.INTERSTITIAL
-    : Platform.OS === "ios"
-    ? Constants.expoConfig?.extra?.admobIosInterstitialId || ""
-    : ""; // Android 支援暫緩
+  const getAdUnitId = () => {
+    if (__DEV__) {
+      return TestIds.INTERSTITIAL;
+    }
+
+    if (Platform.OS === "ios") {
+      return Constants.expoConfig?.extra?.admobIosInterstitialId || "";
+    }
+
+    // Android 支援暫緩
+    return "";
+  };
+
+  const adUnitId = getAdUnitId();
 
   useEffect(() => {
     // 高級用戶不需要廣告

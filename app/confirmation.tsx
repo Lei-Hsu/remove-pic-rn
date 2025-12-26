@@ -1,3 +1,4 @@
+import Constants from "expo-constants";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -5,6 +6,7 @@ import {
   Alert,
   FlatList,
   Image,
+  Platform,
   SafeAreaView,
   StyleSheet,
   TouchableOpacity,
@@ -14,25 +16,53 @@ import {
   BannerAdSize,
   TestIds,
 } from "react-native-google-mobile-ads";
+import { StatisticsModal } from "../components/StatisticsModal";
 import { ThemedText } from "../components/themed-text";
 import { ThemedView } from "../components/themed-view";
 import { useDeletion } from "../context/DeletionContext";
+import { usePurchase } from "../context/PurchaseContext";
+import { useStatistics } from "../context/StatisticsContext";
 import { usePhotoLibrary } from "../hooks/usePhotoLibrary";
+import { calculateAssetsSize } from "../utils/fileSize";
 
-const adUnitId = __DEV__
-  ? TestIds.BANNER
-  : "ca-app-pub-xxxxxxxxxxxxx/yyyyyyyyyy";
+// 從環境變數載入橫幅廣告單元 ID
+const getAdUnitId = () => {
+  if (__DEV__) {
+    return TestIds.BANNER;
+  }
+
+  if (Platform.OS === "ios") {
+    return Constants.expoConfig?.extra?.admobIosBannerId || "";
+  }
+
+  // Android 支援暫緩
+  return "";
+};
+
+const adUnitId = getAdUnitId();
 
 export default function ConfirmationScreen() {
   const { markedForDeletion, unmarkForDeletion, clearDeletionList } =
     useDeletion();
   const { deletePhotos } = usePhotoLibrary();
+  const { isPremium } = usePurchase();
+  const { addSession, totalPhotosDeleted, totalSpaceFreed } = useStatistics();
   const router = useRouter();
   const [isDeleting, setIsDeleting] = useState(false);
+  const [showStatsModal, setShowStatsModal] = useState(false);
+  const [lastSessionStats, setLastSessionStats] = useState<{
+    photosDeleted: number;
+    spaceFreed: number;
+  } | null>(null);
   const { t } = useTranslation();
 
   const handleConfirm = async () => {
     if (markedForDeletion.length === 0) return;
+
+    // 先計算檔案大小（在刪除之前）
+    console.log("[Confirmation] Calculating file sizes...");
+    const totalSize = await calculateAssetsSize(markedForDeletion);
+    console.log(`[Confirmation] Total size to delete: ${totalSize} bytes`);
 
     Alert.alert(
       t("confirmation.alert.title"),
@@ -46,13 +76,22 @@ export default function ConfirmationScreen() {
             setIsDeleting(true);
             const success = await deletePhotos(markedForDeletion);
             setIsDeleting(false);
+
             if (success) {
+              // 儲存統計資料
+              await addSession(markedForDeletion.length, totalSize);
+
+              // 設定彈窗資料
+              setLastSessionStats({
+                photosDeleted: markedForDeletion.length,
+                spaceFreed: totalSize,
+              });
+
+              // 清除刪除列表
               clearDeletionList();
-              Alert.alert(
-                t("common.success"),
-                t("confirmation.success_message"),
-                [{ text: t("common.ok"), onPress: () => router.back() }]
-              );
+
+              // 顯示統計彈窗
+              setShowStatsModal(true);
             }
           },
         },
@@ -127,15 +166,30 @@ export default function ConfirmationScreen() {
           </ThemedText>
         </TouchableOpacity>
       </ThemedView>
-      <ThemedView style={styles.adContainer}>
-        <BannerAd
-          unitId={adUnitId}
-          size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
-          requestOptions={{
-            requestNonPersonalizedAdsOnly: true,
-          }}
-        />
-      </ThemedView>
+      {/* 僅為非高級用戶顯示橫幅廣告 */}
+      {!isPremium && (
+        <ThemedView style={styles.adContainer}>
+          <BannerAd
+            unitId={adUnitId}
+            size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
+            requestOptions={{
+              requestNonPersonalizedAdsOnly: true,
+            }}
+          />
+        </ThemedView>
+      )}
+
+      {/* 統計彈窗 */}
+      <StatisticsModal
+        visible={showStatsModal}
+        onClose={() => {
+          setShowStatsModal(false);
+          router.back();
+        }}
+        sessionStats={lastSessionStats}
+        totalPhotosDeleted={totalPhotosDeleted}
+        totalSpaceFreed={totalSpaceFreed}
+      />
     </SafeAreaView>
   );
 }

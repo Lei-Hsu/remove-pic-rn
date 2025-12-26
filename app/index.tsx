@@ -23,11 +23,20 @@ import { useInterstitialAd } from "../hooks/useInterstitialAd";
 import { usePhotoLibrary } from "../hooks/usePhotoLibrary";
 
 // 從環境變量加載橫幅廣告單元 ID
-const adUnitId = __DEV__
-  ? TestIds.BANNER
-  : Platform.OS === "ios"
-  ? Constants.expoConfig?.extra?.admobIosBannerId || ""
-  : ""; // Android 支援暫緩
+const getAdUnitId = () => {
+  if (__DEV__) {
+    return TestIds.BANNER;
+  }
+
+  if (Platform.OS === "ios") {
+    return Constants.expoConfig?.extra?.admobIosBannerId || "";
+  }
+
+  // Android 支援暫緩
+  return "";
+};
+
+const adUnitId = getAdUnitId();
 
 export default function HomeScreen() {
   const {

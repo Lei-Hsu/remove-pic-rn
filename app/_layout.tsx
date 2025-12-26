@@ -3,15 +3,17 @@ import { StatusBar } from "expo-status-bar";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { DeletionProvider } from "../context/DeletionContext";
 import { PurchaseProvider } from "../context/PurchaseContext";
+import { StatisticsProvider } from "../context/StatisticsContext";
 import "../i18n";
 
 export default function RootLayout() {
   return (
     <SafeAreaProvider>
       <PurchaseProvider>
-        <DeletionProvider>
-          <StatusBar style="dark" />
-          <Stack
+        <StatisticsProvider>
+          <DeletionProvider>
+            <StatusBar style="dark" />
+            <Stack
             screenOptions={{
               headerStyle: { backgroundColor: "#fff" },
               headerTintColor: "#000",
@@ -32,7 +34,8 @@ export default function RootLayout() {
               }}
             />
           </Stack>
-        </DeletionProvider>
+          </DeletionProvider>
+        </StatisticsProvider>
       </PurchaseProvider>
     </SafeAreaProvider>
   );
