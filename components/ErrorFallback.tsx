@@ -1,6 +1,7 @@
 import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { useTranslation } from "react-i18next";
+import { ThemedText } from "./themed-text";
 
 interface ErrorFallbackProps {
   error: Error;
@@ -15,13 +16,17 @@ export const ErrorFallback: React.FC<ErrorFallbackProps> = ({
 
   return (
     <View style={styles.container}>
-      <Text style={styles.emoji}>😞</Text>
-      <Text style={styles.title}>{t("errors.app_error") || "發生錯誤"}</Text>
-      <Text style={styles.message}>
+      <ThemedText style={styles.emoji}>😞</ThemedText>
+      <ThemedText style={styles.title}>
+        {t("errors.app_error") || "發生錯誤"}
+      </ThemedText>
+      <ThemedText lightColor="#666" darkColor="#666" style={styles.message}>
         {error?.message || t("errors.unknown_error") || "未知錯誤"}
-      </Text>
+      </ThemedText>
       <TouchableOpacity style={styles.button} onPress={resetErrorBoundary}>
-        <Text style={styles.buttonText}>{t("common.retry") || "重試"}</Text>
+        <ThemedText type="defaultSemiBold" lightColor="#fff" darkColor="#fff">
+          {t("common.retry") || "重試"}
+        </ThemedText>
       </TouchableOpacity>
     </View>
   );
@@ -47,7 +52,6 @@ const styles = StyleSheet.create({
   },
   message: {
     fontSize: 16,
-    color: "#666",
     textAlign: "center",
     marginBottom: 30,
     paddingHorizontal: 20,
@@ -57,10 +61,5 @@ const styles = StyleSheet.create({
     paddingHorizontal: 30,
     paddingVertical: 12,
     borderRadius: 25,
-  },
-  buttonText: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "600",
   },
 });
