@@ -21,11 +21,13 @@ const resources = {
       },
       home: {
         title: "Clean Gallery",
+        screen_title: "Photo Cleaner",
         review_button: "Review ({{count}})",
         no_photos: "No photos to show",
       },
       confirmation: {
         title: "Review Deletions",
+        screen_title: "Review & Delete",
         no_photos: "No photos marked for deletion.",
         selected_count: "{{count}} photos selected",
         delete_button: "Confirm Delete",
@@ -115,11 +117,13 @@ const resources = {
       },
       home: {
         title: "清理相簿",
+        screen_title: "照片清理器",
         review_button: "檢視 ({{count}})",
         no_photos: "沒有照片",
       },
       confirmation: {
         title: "檢視刪除項目",
+        screen_title: "檢視與刪除",
         no_photos: "沒有標記要刪除的照片。",
         selected_count: "已選擇 {{count}} 張照片",
         delete_button: "確認刪除",
@@ -206,11 +210,13 @@ const resources = {
       },
       home: {
         title: "清理相册",
+        screen_title: "照片清理器",
         review_button: "查看 ({{count}})",
         no_photos: "没有照片",
       },
       confirmation: {
         title: "查看删除项目",
+        screen_title: "查看与删除",
         no_photos: "没有标记要删除的照片。",
         selected_count: "已选择 {{count}} 张照片",
         delete_button: "确认删除",
@@ -297,11 +303,13 @@ const resources = {
       },
       home: {
         title: "Dọn dẹp thư viện",
+        screen_title: "Công cụ dọn ảnh",
         review_button: "Xem lại ({{count}})",
         no_photos: "Không có ảnh nào",
       },
       confirmation: {
         title: "Xem lại mục xóa",
+        screen_title: "Xem lại & Xóa",
         no_photos: "Không có ảnh nào được đánh dấu để xóa.",
         selected_count: "{{count}} ảnh đã chọn",
         delete_button: "Xác nhận xóa",
@@ -393,11 +401,13 @@ const resources = {
       },
       home: {
         title: "ล้างแกลเลอรี",
+        screen_title: "เครื่องมือล้างรูป",
         review_button: "ตรวจสอบ ({{count}})",
         no_photos: "ไม่มีรูปภาพ",
       },
       confirmation: {
         title: "ตรวจสอบการลบ",
+        screen_title: "ตรวจสอบและลบ",
         no_photos: "ไม่มีรูปภาพที่ทำเครื่องหมายเพื่อลบ",
         selected_count: "เลือก {{count}} รูป",
         delete_button: "ยืนยันการลบ",
@@ -486,11 +496,13 @@ const resources = {
       },
       home: {
         title: "Bersihkan Galeri",
+        screen_title: "Pembersih Foto",
         review_button: "Tinjau ({{count}})",
         no_photos: "Tidak ada foto",
       },
       confirmation: {
         title: "Tinjau Penghapusan",
+        screen_title: "Tinjau & Hapus",
         no_photos: "Tidak ada foto yang ditandai untuk dihapus.",
         selected_count: "{{count}} foto dipilih",
         delete_button: "Konfirmasi Hapus",

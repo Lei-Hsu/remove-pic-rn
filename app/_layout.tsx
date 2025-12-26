@@ -1,12 +1,15 @@
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import "../i18n";
 import { initializePurchaseStore } from "../stores/usePurchaseStore";
 import { initializeStatisticsStore } from "../stores/useStatisticsStore";
 
 export default function RootLayout() {
+  const { t } = useTranslation();
+
   useEffect(() => {
     let cleanupPurchase: (() => void) | undefined;
 
@@ -41,12 +44,12 @@ export default function RootLayout() {
       >
         <Stack.Screen
           name="index"
-          options={{ title: "Photo Cleaner", headerShown: false }}
+          options={{ title: t("home.screen_title"), headerShown: false }}
         />
         <Stack.Screen
           name="confirmation"
           options={{
-            title: "Review & Delete",
+            title: t("confirmation.screen_title"),
             presentation: "modal",
             headerShown: false,
           }}
